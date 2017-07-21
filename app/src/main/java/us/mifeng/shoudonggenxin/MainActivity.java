@@ -21,6 +21,7 @@ import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
     private String path = "https://guaju.github.io/versioninfo.json";
+    private String path2 = "https://shidongge.github.io/versioninfo.json";
     private String string;
     private static final String TAG = "MainActivity";
     @Override
@@ -36,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         //创建builder对象
         Request.Builder builder = new Request.Builder();
         final Request request = builder.get()
-                .url(path)
+                .url(path2)
                 .build();
         Call call = ok.newCall(request);
         call.enqueue(new Callback() {
@@ -68,12 +69,13 @@ public class MainActivity extends AppCompatActivity {
                         Log.e(TAG, "wangluo: "+version );
                         String info = data.getString("info");
                         String appurl = data.getString("appurl");
+                        Log.e(TAG, "網址: "+appurl);
                         PackageManager manager = getPackageManager();
                         PackageInfo myinfo = manager.getPackageInfo(getPackageName(), 0);
                         String myversion = myinfo.versionName;
                         Log.e(TAG, "bendi: "+myversion );
                         if (!version.equals(myversion)){
-                            MyDialog.dialog(MainActivity.this,"重大更新",info);
+                            MyDialog.dialog(MainActivity.this,"重大更新",info,appurl);
                         }
                     }
                 } catch (JSONException e) {
