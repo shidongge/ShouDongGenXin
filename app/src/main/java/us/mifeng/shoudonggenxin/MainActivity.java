@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.squareup.okhttp.Call;
 import com.squareup.okhttp.Callback;
@@ -76,6 +77,8 @@ public class MainActivity extends AppCompatActivity {
                         Log.e(TAG, "bendi: "+myversion );
                         if (!version.equals(myversion)){
                             MyDialog.dialog(MainActivity.this,"重大更新",info,appurl);
+                        }else {
+                            Toast.makeText(MainActivity.this, "已是最新版本，无需更新", Toast.LENGTH_SHORT).show();
                         }
                     }
                 } catch (JSONException e) {
