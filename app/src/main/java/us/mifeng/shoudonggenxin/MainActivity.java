@@ -5,8 +5,10 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTabHost;
 import android.util.Log;
+import android.widget.TabHost;
 import android.widget.Toast;
 
 import com.squareup.okhttp.Call;
@@ -20,16 +22,34 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
-public class MainActivity extends AppCompatActivity {
+import us.mifeng.shoudonggenxin.fragment.ChatFragment;
+import us.mifeng.shoudonggenxin.fragment.HomeFragment;
+import us.mifeng.shoudonggenxin.fragment.MineFragment;
+
+public class MainActivity extends FragmentActivity {
     private String path = "https://guaju.github.io/versioninfo.json";
     private String path2 = "https://shidongge.github.io/versioninfo.json";
     private String string;
     private static final String TAG = "MainActivity";
+    private FragmentTabHost host;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         CheckUpdate();
+        initView();
+    }
+
+    private void initView() {
+        host = (FragmentTabHost) findViewById(android.R.id.tabhost);
+        host.setup(MainActivity.this,getSupportFragmentManager(),android.R.id.tabcontent);
+        TabHost.TabSpec home = host.newTabSpec("home").setIndicator("首页");
+        TabHost.TabSpec liaotian = host.newTabSpec("liaotian").setIndicator("聊天");
+        TabHost.TabSpec mine = host.newTabSpec("mine").setIndicator("我的");
+        host.addTab(home,HomeFragment.class,null);
+        host.addTab(liaotian, ChatFragment.class,null);
+        host.addTab(mine, MineFragment.class,null);
     }
 
     private void CheckUpdate() {

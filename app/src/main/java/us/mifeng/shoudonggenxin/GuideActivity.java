@@ -1,14 +1,19 @@
 package us.mifeng.shoudonggenxin;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.OvershootInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -38,7 +43,7 @@ import static us.mifeng.shoudonggenxin.R.drawable.yuan2;
  * Created by shido on 2017/7/24.
  */
 
-public class GuideActivity extends Activity {
+public class GuideActivity extends Activity implements View.OnClickListener {
     private String imgurl = HttpInter.home;
     private String string;
     private List<String> str_list ;
@@ -48,19 +53,32 @@ public class GuideActivity extends Activity {
     private LinearLayout ll;
     private VPAdapter adapter;
     private Button mBtn;
+    private SharedUtils sharedUtils;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_guide);
+        sharedUtils = new SharedUtils();
+
+        String first = sharedUtils.getSp(GuideActivity.this, "first");
+        if (!TextUtils.isEmpty(first)){
+            startActivity(new Intent(GuideActivity.this,SplashActivity.class));
+            finish();
+        }else {
+            initDeta();
+        }
+        sharedUtils.saveSp(GuideActivity.this,"first","hehe");
         initView();
-        initDeta();
+
     }
 
     private void initView() {
         mvp = (ViewPager) findViewById(R.id.mVp);
         ll = (LinearLayout) findViewById(R.id.ll);
         mBtn = (Button) findViewById(R.id.mBtn);
+        mBtn.setVisibility(View.GONE);
+        mBtn.setOnClickListener(this);
         mvp.setOffscreenPageLimit(0);
     }
 
@@ -138,9 +156,7 @@ public class GuideActivity extends Activity {
         mvp.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
             }
-
             @Override
             public void onPageSelected(int position) {
                 yuanDian();
@@ -148,11 +164,15 @@ public class GuideActivity extends Activity {
                 im.setImageResource(yuan2);
                 if(position==(adapter.getCount()-1)){
                     mBtn.setVisibility(View.VISIBLE);
+                    ll.setVisibility(View.INVISIBLE);
+                    Animation animation = AnimationUtils.loadAnimation(GuideActivity.this, R.anim.anniu);
+                    animation.setInterpolator(new OvershootInterpolator());
+                    mBtn.setAnimation(animation);
                 }else {
                     mBtn.setVisibility(View.GONE);
+                    ll.setVisibility(View.VISIBLE);
                 }
             }
-
             @Override
             public void onPageScrollStateChanged(int state) {
 
@@ -163,6 +183,18 @@ public class GuideActivity extends Activity {
     private void yuanDian() {
         for (int i = 0 ;i<ll.getChildCount();i++){
             ((ImageView) ll.getChildAt(i)).setImageResource(R.drawable.yuan);
+        }
+
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.mBtn:
+
+                startActivity(new Intent(GuideActivity.this,SplashActivity.class));
+                finish();
+                break;
         }
     }
 
@@ -195,4 +227,6 @@ public class GuideActivity extends Activity {
             }
         }
     }
+
+
 }
